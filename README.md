@@ -1,9 +1,5 @@
 # ESP32 IoT Smart Home Dashboard
 
-<img src="/assets/dashboard-desktop.png" style="width: 900px;">
-<img src="/assets/dashboard-mobile.jpeg" style="width: 350px;">
-
-
 ## ✨ Features
 
 - **Live Sensor Monitoring:** Real-time data for Temperature, Humidity, Air Quality, and Motion.
@@ -14,6 +10,14 @@
 - **Modern Frontend:** A beautiful, responsive dashboard built with Tailwind CSS that works on both desktop and mobile.
 - **Public Access:** Includes instructions for exposing the local dashboard to the public internet using ngrok.
 
+
+- Dashboard - Desktop View
+<img src="/assets/dashboard-desktop.png" style="width: 900px;">
+
+- Dashboard - Mobile View
+<img src="/assets/dashboard-mobile.jpeg" style="width: 350px;">
+
+
 ## 🏛️ Project Architecture
 
 The data flows through the system in two main ways:
@@ -21,6 +25,8 @@ The data flows through the system in two main ways:
 **1\. Sensor Data (ESP32 to Dashboard):** ESP32 (Sensors) → MQTT Broker → Python Backend (Flask) → SQLite Database & Web Frontend (Browser)
 
 **2\. Control (Dashboard to ESP32):** Web Frontend (Browser) → Python Backend (Flask) → MQTT Broker → ESP32 (LED)
+
+---
 
 ## 🛠️ Hardware Requirements
 
@@ -57,18 +63,8 @@ You will need Python 3 and the following libraries (install via pip):
 python -m pip install Flask paho-mqtt
 ``` 
 
-## 📁 File Structure
-
-iot-dashboard/
-├── app.py
-├── esp32-code/
-│   └── esp32_sketch.ino
-├── templates/
-│   └── index.html
-├── sensor_data.db
-└── README.md
-
 ---
+
 ## 🚀 Step-by-Step Project Flow
 
 Here is the complete flow, from setting up the hardware to viewing the public dashboard.
