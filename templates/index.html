@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+    <style>
+        /* ... (Your existing style block - no changes needed) ... */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e0e0e0; }
+        ::-webkit-scrollbar-thumb { background: #a0a0a0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #888; }
+        .chart-container {
+            width: 100%;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <div class="w-16 bg-white shadow-lg flex-col items-center py-6 border-r border-gray-200 hidden md:flex">
+            <div class="mb-10">
+                <a href="#" class="text-blue-600 text-3xl font-bold">
+                    &#127968;
+                </a>
+            </div>
+            <nav class="flex flex-col space-y-8">
+                <a href="/" class="p-2 rounded-lg bg-blue-100 text-blue-600" title="Dashboard">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 00-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                </a>
+            </nav>
+        </div>
+
+        <div class="flex-1 p-4 md:p-8 overflow-y-auto">
+            
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
+                <div class="flex items-center space-x-4">
+                    <img class="w-10 h-10 rounded-full border-2 border-blue-400" src="https://via.placeholder.com/150/0000FF/FFFFFF?text=User" alt="User Avatar">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                
+                <div class="bg-white p-6 rounded-xl shadow-md col-span-1 md:col-span-2">
+                    <h2 class="text-xl font-semibold mb-4">Living Room Environment</h2>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-5xl md:text-6xl">☀️</span>
+                        <div>
+                            <p class="text-4xl md:text-5xl font-bold text-blue-600" id="temp_live_p">-- °C</p>
+                            <p class="text-sm text-gray-500">Galle, SL</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-gray-600 text-base">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-blue-500 text-xl">&#x25F7;</span>
+                            <span id="humi_live_p">--% Humidity</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-blue-500 text-xl">&#x27A4;</span>
+                            <span id="gas_live_p">-- Air Quality</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 col-span-1">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="text-yellow-500 text-2xl">🌡️</span>
+                            <h2 class="text-xl font-semibold">Temperature</h2>
+                        </div>
+                        <p class="text-3xl md:text-4xl font-bold" id="temp_card_p">-- °C</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="text-green-500 text-2xl">💨</span>
+                            <h2 class="text-xl font-semibold">Air Quality</h2>
+                        </div>
+                        <p class="text-3xl md:text-4xl font-bold" id="gas_card_p">--</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 col-span-1">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="text-blue-500 text-2xl">💧</span>
+                            <h2 class="text-xl font-semibold">Humidity</h2>
+                        </div>
+                        <p class="text-3xl md:text-4xl font-bold" id="humi_card_p">-- %</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-between">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="text-blue-600 text-2xl">🚨</span>
+                            <h2 class="text-xl font-semibold">Motion Tracker</h2>
+                        </div>
+                        <p class="text-3xl font-bold" id="motion_live_p">---</M>
+                        <p class="text-sm text-gray-500">Last update: <span id="motion_time">N/A</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Sensor History</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="chart-container col-span-1">
+                        <h3 class="text-xl font-semibold text-center mb-4">Temperature</h3>
+                        <canvas id="tempChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container col-span-1">
+                        <h3 class="text-xl font-semibold text-center mb-4">Humidity</h3>
+                        <canvas id="humiChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container lg:col-span-2">
+                        <h3 class="text-xl font-semibold text-center mb-4">Air Quality</h3>
+                        <canvas id="gasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div> </div> <script>
+        // --- NO CHANGES NEEDED TO ANY JAVASCRIPT ---
+        
+        // --- SCRIPT FOR LIVE DATA CARDS ---
+        async function updateData() {
+            try {
+                const response = await fetch('/data');
+                const data = await response.json();
+                document.getElementById('temp_live_p').innerText = data.temperature + " °C";
+                document.getElementById('humi_live_p').innerText = data.humidity + "% Humidity";
+                document.getElementById('gas_live_p').innerText = data.gas + " Air Quality";
+                document.getElementById('temp_card_p').innerText = data.temperature + " °C";
+                document.getElementById('humi_card_p').innerText = data.humidity + " %";
+                document.getElementById('gas_card_p').innerText = data.gas;
+                document.getElementById('motion_live_p').innerText = data.motion;
+                if (data.motion === 'DETECTED') {
+                    document.getElementById('motion_live_p').classList.add('text-red-600');
+                    document.getElementById('motion_time').innerText = new Date().toLocaleTimeString();
+                } else {
+                    document.getElementById('motion_live_p').classList.remove('text-red-600');
+                }
+            } catch (error) {
+                console.error("Error fetching live data:", error);
+            }
+        }
+
+        // --- SCRIPT FOR HISTORY CHARTS ---
+        async function createChart(canvasId, apiUrl, labelName, color) {
+            try {
+                const response = await fetch(apiUrl);
+                const apiData = await response.json();
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: apiData.labels,
+                        datasets: [{
+                            label: labelName,
+                            data: apiData.data,
+                            borderColor: color,
+                            backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
+                            tension: 0.1,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: { unit: 'minute', tooltipFormat: 'HH:mm:ss' },
+                                title: { display: true, text: 'Time' }
+                            },
+                            y: {
+                                title: { display: true, text: apiData.y_label }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error(`Error creating chart ${canvasId}:`, error);
+            }
+        }
+
+        // --- RUN EVERYTHING ON PAGE LOAD ---
+        (function() {
+            updateData();
+            setInterval(updateData, 3000);
+            createChart('tempChart', '/api/history/temperature', 'Temperature', 'rgb(255, 99, 132)');
+            createChart('humiChart', '/api/history/humidity', 'Humidity', 'rgb(54, 162, 235)');
+            createChart('gasChart', '/api/history/gas', 'Air Quality', 'rgb(75, 192, 192)');
+        })();
+    </script>
+</body>
+</html>
