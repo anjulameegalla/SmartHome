@@ -1,5 +1,8 @@
 # ESP32 IoT Smart Home Dashboard
 
+<a href="https://github.com/anjulameegalla/SmartHome" target="_blank">
+  <img src="https://img.shields.io/badge/Visit%20GitHub%20Repo-blue?style=for-the-badge" alt="Visit GitHub Repo">
+</a>
 
 #### Dashboard - Desktop View
 <img src="/assets/dashboard-desktop.png" style="width: 900px;">
