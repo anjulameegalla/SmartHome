@@ -18,6 +18,7 @@
 - **Modern Frontend:** A beautiful, responsive dashboard built with Tailwind CSS that works on both desktop and mobile.
 - **Public Access:** Includes instructions for exposing the local dashboard to the public internet using ngrok.
 
+<br>
 
 ## 🏛️ Project Architecture
 
@@ -25,7 +26,7 @@ The data flows through the system in two main ways:
 
 **1\. Sensor Data (ESP32 to Dashboard):** ESP32 (Sensors) → MQTT Broker → Python Backend (Flask) → SQLite Database & Web Frontend (Browser)
 
-**2\. Control (Dashboard to ESP32):** Web Frontend (Browser) → Python Backend (Flask) → MQTT Broker → ESP32 (LED)
+**2\. Control (Dashboard to ESP32):** Web Frontend (Browser) → Python Backend (Flask) → MQTT Broker → ESP32 (LED, Sensors)
 
 ---
 
