@@ -3,12 +3,15 @@
 <a href="https://github.com/anjulameegalla/SmartHome" target="_blank">
   <img src="https://img.shields.io/badge/Visit%20GitHub%20Repo-blue?style=for-the-badge" alt="Visit GitHub Repo">
 </a>
+<a href="https://dorine-unswilled-burningly.ngrok-free.dev/" target="_blank">
+  <img src="https://img.shields.io/badge/Visit%20Web%20Dashboard-green?style=for-the-badge" alt="Visit Web Dashboard">
+</a>
 
 #### Dashboard - Desktop View
-<img src="/assets/dashboard-desktop.png" style="width: 900px;">
+<img src="/assets/dashboard-desktop.png" style="width: 900px;" alt="Dash Desktop View">
 
 #### Dashboard - Mobile View
-<img src="/assets/dashboard-mobile.jpeg" style="width: 350px;">
+<img src="/assets/dashboard-mobile.jpeg" style="width: 350px;" alt="Dash Mobile View"> 
 
 
 ## ✨ Features
@@ -43,7 +46,7 @@ The data flows through the system in two main ways:
 - 1x 330 Ohm Resistor (for the LED)
 - Breadboard and Jumper Wires
 
-<img src="/assets/hardware.jpeg" style="width: 350px;">
+<img src="/assets/hardware.jpeg" style="width: 350px;" alt="ESP32">
 
 ## 💻 Software & Libraries
 
