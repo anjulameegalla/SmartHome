@@ -1,5 +1,13 @@
 # ESP32 IoT Smart Home Dashboard
 
+
+#### Dashboard - Desktop View
+<img src="/assets/dashboard-desktop.png" style="width: 900px;">
+
+#### Dashboard - Mobile View
+<img src="/assets/dashboard-mobile.jpeg" style="width: 350px;">
+
+
 ## ✨ Features
 
 - **Live Sensor Monitoring:** Real-time data for Temperature, Humidity, Air Quality, and Motion.
@@ -9,13 +17,6 @@
 - **Python Backend:** A robust Flask server manages data, serves the web page, and handles API requests.
 - **Modern Frontend:** A beautiful, responsive dashboard built with Tailwind CSS that works on both desktop and mobile.
 - **Public Access:** Includes instructions for exposing the local dashboard to the public internet using ngrok.
-
-
-- Dashboard - Desktop View
-<img src="/assets/dashboard-desktop.png" style="width: 900px;">
-
-- Dashboard - Mobile View
-<img src="/assets/dashboard-mobile.jpeg" style="width: 350px;">
 
 
 ## 🏛️ Project Architecture

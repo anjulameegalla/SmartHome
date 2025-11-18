@@ -2,54 +2,79 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <WiFi.h>
-#include <PubSubClient.h> // --- NEW ---
+#include <PubSubClient.h>
 
-// --- Your Wi-Fi Credentials ---
-const char* ssid = "Dialog 4G 696";
-const char* password = "5D2345F1";
-
-// --- NEW: MQTT Broker ---
+// --- Wi-Fi & MQTT (No change) ---
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
 const char* mqtt_server = "broker.hivemq.com";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// --- Sensor & Output Pins ---
+// --- NEW: Define command topic ---
+#define LED_SET_TOPIC "anjula/project/led/set"
+
+// --- Sensor Pins (No change) ---
 #define DHTPIN 4
 #define MQ_PIN 34
 #define PIR_PIN 23
 #define LED_PIN 25
 
-// --- Sensor Objects ---
+// ... (Other objects and variables) ...
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
-
-// --- Global variables ---
 float global_humidity = 0;
 float global_temperature = 0;
 int   global_gasValue = 0;
 int   global_pirState = LOW;
-
-// --- Non-Blocking Timer ---
 unsigned long previousSensorRead = 0;
-const long sensorInterval = 5000; // Send data every 5 seconds
+const long sensorInterval = 5000;
 
-// --- NEW: Function to reconnect to MQTT ---
+
+// --- --- NEW: MQTT Callback Function --- ---
+// This function is called every time a message arrives on a topic we subscribe to
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  
+  // Convert payload to a string
+  String message;
+  for (int i = 0; i < length; i++) {
+    message += (char)payload[i];
+  }
+  Serial.println(message);
+
+  // Check if the message is for our LED
+  if (String(topic) == LED_SET_TOPIC) {
+    if (message == "ON") {
+      Serial.println("Turning LED ON");
+      digitalWrite(LED_PIN, HIGH);
+    } else if (message == "OFF") {
+      Serial.println("Turning LED OFF");
+      digitalWrite(LED_PIN, LOW);
+    }
+  }
+}
+// --- --- END NEW --- ---
+
+
 void reconnect() {
-  // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    // Create a random client ID
     String clientId = "ESP32-";
     clientId += String(random(0xffff), HEX);
     
-    // Attempt to connect
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
+      // --- NEW: Subscribe to the command topic ---
+      client.subscribe(LED_SET_TOPIC);
+      Serial.print("Subscribed to: ");
+      Serial.println(LED_SET_TOPIC);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
       delay(5000);
     }
   }
@@ -58,15 +83,15 @@ void reconnect() {
 void setup() {
   Serial.begin(115200);
   
-  // Set pin modes
   pinMode(MQ_PIN, INPUT);
   pinMode(PIR_PIN, INPUT);
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT); // LED is an output
+  digitalWrite(LED_PIN, LOW); // Start with LED off
   
   dht.begin();
   
   Serial.println("PIR calibrating (10s)...");
-  delay(10000); // Shorter calibration for testing
+  delay(10000);
   Serial.println("Calibration complete.");
 
   // --- Connect to Wi-Fi ---
@@ -78,40 +103,32 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("\nWiFi connected.");
-  Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
 
-  // --- NEW: Point client to the MQTT server ---
   client.setServer(mqtt_server, 1883);
+  // --- NEW: Tell the client to use our callback function ---
+  client.setCallback(callback);
 }
 
 void loop() {
-  // --- NEW: Check MQTT connection ---
   if (!client.connected()) {
     reconnect();
   }
-  client.loop(); // This handles MQTT communication
+  client.loop(); // This checks for incoming messages
 
-  // --- Non-blocking sensor read ---
+  // --- Sensor reading loop (No change) ---
   unsigned long currentMillis = millis();
   if (currentMillis - previousSensorRead >= sensorInterval) {
     previousSensorRead = currentMillis;
 
-    // --- Read sensors ---
     global_humidity = dht.readHumidity();
     global_temperature = dht.readTemperature();
     global_gasValue = analogRead(MQ_PIN);
 
-    // Check for valid DHT readings
     if (isnan(global_humidity) || isnan(global_temperature)) {
       Serial.println("Failed to read from DHT sensor!");
       return;
     }
-
-    // --- NEW: Publish data to MQTT ---
-    
-    // We use a "base topic" to keep your data organized
-    // Use something unique! Maybe "anjula/project/"
     
     client.publish("anjula/project/temperature", String(global_temperature).c_str(), true);
     client.publish("anjula/project/humidity", String(global_humidity).c_str(), true);
@@ -120,13 +137,11 @@ void loop() {
     Serial.println("Sensor data published!");
   }
 
-  // --- PIR logic (runs every loop, so it's fast) ---
+  // --- --- UPDATED PIR LOGIC --- ---
+  // The LED is no longer controlled by the PIR
   global_pirState = digitalRead(PIR_PIN);
   if (global_pirState == HIGH) {
-    digitalWrite(LED_PIN, HIGH);
-    // --- NEW: Publish motion event instantly ---
     client.publish("anjula/project/motion", "DETECTED", true);
-  } else {
-    digitalWrite(LED_PIN, LOW);
   }
+  // --- --- END UPDATED --- ---
 }

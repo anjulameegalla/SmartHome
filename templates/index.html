@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Home Dashboard</title>
     
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏠%3C/text%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
     <style>
-        /* ... (Your existing style block - no changes needed) ... */
+        /* Optional: Custom scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #e0e0e0; }
         ::-webkit-scrollbar-thumb { background: #a0a0a0; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #888; }
+        
+        /* Style for the chart containers */
         .chart-container {
             width: 100%;
             background: #ffffff;
@@ -24,6 +27,17 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-top: 24px;
         }
+
+        /* Basic switch styling */
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; -webkit-transition: .4s; transition: .4s; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:focus + .slider { box-shadow: 0 0 1px #2196F3; }
+        input:checked + .slider:before { -webkit-transform: translateX(26px); -ms-transform: translateX(26px); transform: translateX(26px); }
+        .slider.round { border-radius: 34px; }
+        .slider.round:before { border-radius: 50%; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans antialiased text-gray-800">
@@ -110,6 +124,19 @@
                     </div>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-blue-600 text-white p-6 rounded-xl shadow-md flex flex-col justify-between col-span-1">
+                    <h2 class="text-xl font-semibold mb-4">LED Control</h2>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg">Living Room LED</span>
+                        <label class="switch">
+                            <input type="checkbox" id="ledSwitch" onclick="toggleLED()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
             
             <div class="mt-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Sensor History</h2>
@@ -133,19 +160,24 @@
             </div>
 
         </div> </div> <script>
-        // --- NO CHANGES NEEDED TO ANY JAVASCRIPT ---
         
         // --- SCRIPT FOR LIVE DATA CARDS ---
         async function updateData() {
             try {
                 const response = await fetch('/data');
                 const data = await response.json();
+
+                // Update various elements with live data
                 document.getElementById('temp_live_p').innerText = data.temperature + " °C";
                 document.getElementById('humi_live_p').innerText = data.humidity + "% Humidity";
                 document.getElementById('gas_live_p').innerText = data.gas + " Air Quality";
+                
+                // Update the stacked cards
                 document.getElementById('temp_card_p').innerText = data.temperature + " °C";
                 document.getElementById('humi_card_p').innerText = data.humidity + " %";
                 document.getElementById('gas_card_p').innerText = data.gas;
+
+                // Motion Card
                 document.getElementById('motion_live_p').innerText = data.motion;
                 if (data.motion === 'DETECTED') {
                     document.getElementById('motion_live_p').classList.add('text-red-600');
@@ -153,6 +185,7 @@
                 } else {
                     document.getElementById('motion_live_p').classList.remove('text-red-600');
                 }
+
             } catch (error) {
                 console.error("Error fetching live data:", error);
             }
@@ -163,7 +196,9 @@
             try {
                 const response = await fetch(apiUrl);
                 const apiData = await response.json();
+
                 const ctx = document.getElementById(canvasId).getContext('2d');
+                
                 new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -194,11 +229,34 @@
                 console.error(`Error creating chart ${canvasId}:`, error);
             }
         }
+        
+        // --- FUNCTION TO CONTROL LED ---
+        async function toggleLED() {
+            const ledSwitch = document.getElementById('ledSwitch');
+            const state = ledSwitch.checked ? "ON" : "OFF";
+            
+            console.log("Sending command:", state); // For debugging
+
+            try {
+                await fetch('/control/led', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ state: state })
+                });
+            } catch (error) {
+                console.error("Error sending LED command:", error);
+            }
+        }
 
         // --- RUN EVERYTHING ON PAGE LOAD ---
         (function() {
-            updateData();
-            setInterval(updateData, 3000);
+            // Start the live data updates
+            updateData(); // Run once on load
+            setInterval(updateData, 3000); // Update every 3 seconds
+
+            // Create the history charts
             createChart('tempChart', '/api/history/temperature', 'Temperature', 'rgb(255, 99, 132)');
             createChart('humiChart', '/api/history/humidity', 'Humidity', 'rgb(54, 162, 235)');
             createChart('gasChart', '/api/history/gas', 'Air Quality', 'rgb(75, 192, 192)');
