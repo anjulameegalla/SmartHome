@@ -6,19 +6,16 @@
     <title>Smart Home Dashboard</title>
     
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏠%3C/text%3E%3C/svg%3E">
-    <script src="https://cdn.tailwindcss.com"></script>
     
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
     <style>
-        /* Optional: Custom scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #e0e0e0; }
         ::-webkit-scrollbar-thumb { background: #a0a0a0; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #888; }
-        
-        /* Style for the chart containers */
         .chart-container {
             width: 100%;
             background: #ffffff;
@@ -27,8 +24,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-top: 24px;
         }
-
-        /* Basic switch styling */
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; }
@@ -66,9 +61,9 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 
-                <div class="bg-white p-6 rounded-xl shadow-md col-span-1 md:col-span-2">
+                <div class="bg-white p-6 rounded-xl shadow-md col-span-1 md:row-span-2">
                     <h2 class="text-xl font-semibold mb-4">Living Room Environment</h2>
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-5xl md:text-6xl">☀️</span>
@@ -77,7 +72,7 @@
                             <p class="text-sm text-gray-500">Galle, SL</p>
                         </div>
                     </div>
-                    <div class="flex justify-between text-gray-600 text-base">
+                    <div class="flex flex-col space-y-3 text-gray-600 text-base mt-6">
                         <div class="flex items-center space-x-2">
                             <span class="text-blue-500 text-xl">&#x25F7;</span>
                             <span id="humi_live_p">--% Humidity</span>
@@ -89,73 +84,88 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 col-span-1">
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <span class="text-yellow-500 text-2xl">🌡️</span>
-                            <h2 class="text-xl font-semibold">Temperature</h2>
-                        </div>
-                        <p class="text-3xl md:text-4xl font-bold" id="temp_card_p">-- °C</p>
+                <div class="bg-white p-6 rounded-xl shadow-md col-span-1">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-yellow-500 text-2xl">🌡️</span>
+                        <h2 class="text-xl font-semibold">Temperature</h2>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <span class="text-green-500 text-2xl">💨</span>
-                            <h2 class="text-xl font-semibold">Air Quality</h2>
-                        </div>
-                        <p class="text-3xl md:text-4xl font-bold" id="gas_card_p">--</p>
-                    </div>
+                    <p class="text-3xl md:text-4xl font-bold" id="temp_card_p">-- °C</p>
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 col-span-1">
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <span class="text-blue-500 text-2xl">💧</span>
-                            <h2 class="text-xl font-semibold">Humidity</h2>
-                        </div>
-                        <p class="text-3xl md:text-4xl font-bold" id="humi_card_p">-- %</p>
+                <div class="bg-white p-6 rounded-xl shadow-md col-span-1">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-green-500 text-2xl">💨</span>
+                        <h2 class="text-xl font-semibold">Air Quality</h2>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-between">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <span class="text-blue-600 text-2xl">🚨</span>
-                            <h2 class="text-xl font-semibold">Motion Tracker</h2>
-                        </div>
-                        <p class="text-3xl font-bold" id="motion_live_p">---</M>
-                        <p class="text-sm text-gray-500">Last update: <span id="motion_time">N/A</span></p>
+                    <p class="text-3xl md:text-4xl font-bold" id="gas_card_p">--</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md col-span-1">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-blue-500 text-2xl">💧</span>
+                        <h2 class="text-xl font-semibold">Humidity</h2>
                     </div>
+                    <p class="text-3xl md:text-4xl font-bold" id="humi_card_p">-- %</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-between col-span-1">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-blue-600 text-2xl">🚨</span>
+                        <h2 class="text-xl font-semibold">Motion Tracker</h2>
+                    </div>
+                    <p class="text-3xl font-bold" id="motion_live_p">---</M>
+                    <p class="text-sm text-gray-500">Last update: <span id="motion_time">N/A</span></p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-blue-600 text-white p-6 rounded-xl shadow-md flex flex-col justify-between col-span-1">
-                    <h2 class="text-xl font-semibold mb-4">LED Control</h2>
-                    <div class="flex justify-between items-center">
-                        <span class="text-lg">Living Room LED</span>
-                        <label class="switch">
-                            <input type="checkbox" id="ledSwitch" onclick="toggleLED()">
-                            <span class="slider round"></span>
-                        </label>
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Controls</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-blue-600 text-white p-6 rounded-xl shadow-md flex flex-col justify-between col-span-1">
+                        <h2 class="text-xl font-semibold mb-4">LED Control</h2>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg">Living Room LED</span>
+                            <label class="switch">
+                                <input type="checkbox" id="ledSwitch" onclick="toggleLED()">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md col-span-1 md:col-span-2">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800">Sensor Toggles</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50">
+                                <span class="text-lg font-medium text-gray-700">DHT (Temp/Humi)</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="dhtSwitch" onclick="toggleSensor('dht')" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50">
+                                <span class="text-lg font-medium text-gray-700">Gas Sensor</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="gasSwitch" onclick="toggleSensor('gas')" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50">
+                                <span class="text-lg font-medium text-gray-700">PIR Motion</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="pirSwitch" onclick="toggleSensor('pir')" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
             <div class="mt-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Sensor History</h2>
-                
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="chart-container col-span-1">
-                        <h3 class="text-xl font-semibold text-center mb-4">Temperature</h3>
-                        <canvas id="tempChart"></canvas>
-                    </div>
-                    
-                    <div class="chart-container col-span-1">
-                        <h3 class="text-xl font-semibold text-center mb-4">Humidity</h3>
-                        <canvas id="humiChart"></canvas>
-                    </div>
-                    
-                    <div class="chart-container lg:col-span-2">
-                        <h3 class="text-xl font-semibold text-center mb-4">Air Quality</h3>
-                        <canvas id="gasChart"></canvas>
-                    </div>
+                    <div class="chart-container col-span-1"><h3 class="text-xl font-semibold text-center mb-4">Temperature</h3><canvas id="tempChart"></canvas></div>
+                    <div class="chart-container col-span-1"><h3 class="text-xl font-semibold text-center mb-4">Humidity</h3><canvas id="humiChart"></canvas></div>
+                    <div class="chart-container lg:col-span-2"><h3 class="text-xl font-semibold text-center mb-4">Air Quality</h3><canvas id="gasChart"></canvas></div>
                 </div>
             </div>
 
@@ -166,18 +176,12 @@
             try {
                 const response = await fetch('/data');
                 const data = await response.json();
-
-                // Update various elements with live data
                 document.getElementById('temp_live_p').innerText = data.temperature + " °C";
                 document.getElementById('humi_live_p').innerText = data.humidity + "% Humidity";
                 document.getElementById('gas_live_p').innerText = data.gas + " Air Quality";
-                
-                // Update the stacked cards
                 document.getElementById('temp_card_p').innerText = data.temperature + " °C";
                 document.getElementById('humi_card_p').innerText = data.humidity + " %";
                 document.getElementById('gas_card_p').innerText = data.gas;
-
-                // Motion Card
                 document.getElementById('motion_live_p').innerText = data.motion;
                 if (data.motion === 'DETECTED') {
                     document.getElementById('motion_live_p').classList.add('text-red-600');
@@ -185,7 +189,6 @@
                 } else {
                     document.getElementById('motion_live_p').classList.remove('text-red-600');
                 }
-
             } catch (error) {
                 console.error("Error fetching live data:", error);
             }
@@ -196,14 +199,10 @@
             try {
                 const response = await fetch(apiUrl);
                 const apiData = await response.json();
-
                 const ctx = document.getElementById(canvasId).getContext('2d');
-                
                 new Chart(ctx, {
                     type: 'line',
-                    data: {
-                        labels: apiData.labels,
-                        datasets: [{
+                    data: { labels: apiData.labels, datasets: [{
                             label: labelName,
                             data: apiData.data,
                             borderColor: color,
@@ -212,18 +211,10 @@
                             fill: true
                         }]
                     },
-                    options: {
-                        scales: {
-                            x: {
-                                type: 'time',
-                                time: { unit: 'minute', tooltipFormat: 'HH:mm:ss' },
-                                title: { display: true, text: 'Time' }
-                            },
-                            y: {
-                                title: { display: true, text: apiData.y_label }
-                            }
-                        }
-                    }
+                    options: { scales: {
+                        x: { type: 'time', time: { unit: 'minute', tooltipFormat: 'HH:mm:ss' }, title: { display: true, text: 'Time' }},
+                        y: { title: { display: true, text: apiData.y_label }}
+                    }}
                 });
             } catch (error) {
                 console.error(`Error creating chart ${canvasId}:`, error);
@@ -234,19 +225,36 @@
         async function toggleLED() {
             const ledSwitch = document.getElementById('ledSwitch');
             const state = ledSwitch.checked ? "ON" : "OFF";
-            
-            console.log("Sending command:", state); // For debugging
-
+            console.log("Sending LED command:", state);
             try {
                 await fetch('/control/led', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ state: state })
                 });
             } catch (error) {
                 console.error("Error sending LED command:", error);
+            }
+        }
+
+        // --- --- NEW: FUNCTION TO CONTROL SENSORS --- ---
+        async function toggleSensor(sensorName) {
+            // Find the correct switch
+            const sensorSwitch = document.getElementById(sensorName + 'Switch');
+            const state = sensorSwitch.checked ? "ON" : "OFF";
+
+            console.log(`Sending command for ${sensorName}: ${state}`);
+
+            try {
+                await fetch('/control/sensor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sensor: sensorName, state: state })
+                });
+            } catch (error) {
+                console.error(`Error sending ${sensorName} command:`, error);
             }
         }
 

@@ -1,13 +1,14 @@
-from flask import Flask, jsonify, render_template, request # --- NEW: Import 'request'
+from flask import Flask, jsonify, render_template, request # Import request
 import paho.mqtt.client as mqtt
 import threading
 import sqlite3
 from datetime import datetime
+import time
 
 # --- Flask App ---
 app = Flask(__name__)
 
-# --- Database (No change) ---
+# --- Database ---
 DB_NAME = "sensor_data.db"
 def init_db():
     conn = sqlite3.connect(DB_NAME, check_same_thread=False)
@@ -25,7 +26,7 @@ def init_db():
     print(f"Database '{DB_NAME}' initialized.")
 
 # --- MQTT Client ---
-MQTT_BROKER = "broker.hivemq.com"
+MQTT_BROKER = "broker.hivemq.com" # public broker
 MQTT_PORT = 1883
 TOPICS = [
     "anjula/project/temperature",
@@ -33,8 +34,11 @@ TOPICS = [
     "anjula/project/gas",
     "anjula/project/motion"
 ]
-# --- NEW: Define the command topic ---
+# --- command topics ---
 LED_COMMAND_TOPIC = "anjula/project/led/set"
+DHT_COMMAND_TOPIC = "anjula/project/dht/set"
+GAS_COMMAND_TOPIC = "anjula/project/gas/set"
+PIR_COMMAND_TOPIC = "anjula/project/pir/set"
 
 sensor_data = {
     "temperature": "Waiting...",
@@ -43,11 +47,10 @@ sensor_data = {
     "motion": "Waiting..."
 }
 
-# --- NEW: Create client in global scope ---
+# --- Create client in global scope (for Flask + thread to share) ---
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
 
 def log_to_db(topic, payload):
-    # ... (This function doesn't change)
     try:
         conn = sqlite3.connect(DB_NAME, check_same_thread=False)
         c = conn.cursor()
@@ -69,7 +72,6 @@ def on_connect(client, userdata, flags, rc):
         print(f"Failed to connect, return code {rc}\n")
 
 def on_message(client, userdata, msg):
-    # ... (This function doesn't change)
     topic = msg.topic
     payload = msg.payload.decode()
     print(f"Received message: Topic='{topic}'  Data='{payload}'")
@@ -80,11 +82,17 @@ def on_message(client, userdata, msg):
     elif topic == "anjula/project/motion": sensor_data["motion"] = payload
 
 def mqtt_listener():
-    # --- UPDATED: Use the global client ---
+    # Use the global client
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect(MQTT_BROKER, MQTT_PORT, 60)
-    client.loop_forever()
+    
+    while True:
+        try:
+            client.connect(MQTT_BROKER, MQTT_PORT, 60)
+            client.loop_forever() # Blocks here
+        except Exception as e:
+            print(f"MQTT connection failed: {e}. Retrying in 5 seconds...")
+            time.sleep(5)
 
 
 # --- Flask Web Routes ---
@@ -96,13 +104,8 @@ def index():
 def get_data():
     return jsonify(sensor_data)
     
-@app.route('/history') # This is the old route, remove if unused
-def history():
-    return render_template('history.html')
-
 @app.route('/api/history/<string:sensor_name>')
 def get_history(sensor_name):
-    # ... (This function doesn't change)
     config = SENSOR_MAP.get(sensor_name)
     if not config:
         return jsonify({"error": "Invalid sensor name"}), 404
@@ -119,37 +122,55 @@ def get_history(sensor_name):
     data = [float(row['value']) for row in rows]
     return jsonify({'labels': labels, 'data': data, 'y_label': unit})
 
-# --- --- NEW: API Endpoint for LED Control --- ---
 @app.route('/control/led', methods=['POST'])
 def control_led():
     data = request.json
-    state = data.get('state') # Expected: "ON" or "OFF"
-    
+    state = data.get('state') 
     if state in ["ON", "OFF"]:
-        try:
-            # Use the global client to publish the command
-            client.publish(LED_COMMAND_TOPIC, state)
-            print(f"Published to {LED_COMMAND_TOPIC}: {state}")
-            return jsonify({"success": True, "state": state})
-        except Exception as e:
-            print(f"Failed to publish: {e}")
-            return jsonify({"success": False, "error": str(e)}), 500
-            
+        client.publish(LED_COMMAND_TOPIC, state)
+        print(f"Published to {LED_COMMAND_TOPIC}: {state}")
+        return jsonify({"success": True, "state": state})
     return jsonify({"success": False, "error": "Invalid state"}), 400
-# --- --- END NEW --- ---
+
+# --- --- NEW: API Endpoint for Sensor Control --- ---
+@app.route('/control/sensor', methods=['POST'])
+def control_sensor():
+    data = request.json
+    sensor = data.get('sensor') # "dht", "gas", "pir"
+    state = data.get('state')  # "ON", "OFF"
+    
+    topic_to_publish = None
+    if sensor == "dht":
+        topic_to_publish = DHT_COMMAND_TOPIC
+    elif sensor == "gas":
+        topic_to_publish = GAS_COMMAND_TOPIC
+    elif sensor == "pir":
+        topic_to_publish = PIR_COMMAND_TOPIC
+    else:
+        return jsonify({"success": False, "error": "Invalid sensor"}), 400
+    
+    try:
+        client.publish(topic_to_publish, state)
+        print(f"Published to {topic_to_publish}: {state}")
+        return jsonify({"success": True, "sensor": sensor, "state": state})
+    except Exception as e:
+        print(f"Failed to publish: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-# --- Main Program (No change) ---
+# --- Main Program ---
 if __name__ == '__main__':
-    # ... (This section doesn't change)
-    # Note: You'll need to add SENSOR_MAP back if you copy-pasted
     SENSOR_MAP = {
         'temperature': {'topic': 'anjula/project/temperature', 'unit': '°C'},
         'humidity': {'topic': 'anjula/project/humidity', 'unit': '%'},
         'gas': {'topic': 'anjula/project/gas', 'unit': 'Raw Value'}
     }
     init_db() 
+    
+    # Start MQTT listener in its own thread
     mqtt_thread = threading.Thread(target=mqtt_listener, daemon=True)
     mqtt_thread.start()
+    
+    # Start the Flask web server
     print("Starting Flask web server...")
     app.run(host="0.0.0.0", port=5000)

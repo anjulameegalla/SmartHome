@@ -12,7 +12,7 @@
 
 - **Live Sensor Monitoring:** Real-time data for Temperature, Humidity, Air Quality, and Motion.
 - **Historical Data:** All sensor data is logged to an SQLite database and displayed in historical graphs using Chart.js.
-- **Two-Way Control:** A toggle switch on the dashboard sends an MQTT command back to the ESP32 to control a physical LED.
+- **Two-Way Control:** A toggle switch on the dashboard sends an MQTT command back to the ESP32 to control a physical LED. Update: Added more switches to control (Enable/disable) other sensors.
 - **MQTT-Based:** Built on a lightweight and fast MQTT architecture for efficient data transmission.
 - **Python Backend:** A robust Flask server manages data, serves the web page, and handles API requests.
 - **Modern Frontend:** A beautiful, responsive dashboard built with Tailwind CSS that works on both desktop and mobile.
@@ -153,5 +153,4 @@ ngrok http 5000
 ## 🚀 Future Improvements
 
 - **Permanent Deployment:** Deploy the app.py script to a 24/7 cloud service like PythonAnywhere, Heroku, or a VPS.
-- **Add More Controls:** Add more switches to control other ESP32 pins.
 - **Custom MQTT Broker:** Set up your own private MQTT broker (like Mosquitto) on a Raspberry Pi or in the cloud for better security and privacy.
