@@ -39,13 +39,7 @@
             display: flex;
         }
 
-        /* --- 2. SCROLL OFFSET FIX --- */
-        /* This ensures that when you click a link, it doesn't hit the very top */
-        #top, #controls, #analytics {
-            scroll-margin-top: 32px;
-        }
-
-        /* --- 3. SIDEBAR --- */
+        /* --- 2. SIDEBAR (Desktop) / BOTTOM NAV (Mobile) --- */
         .sidebar {
             width: 260px;
             background-color: var(--bg-sidebar);
@@ -86,13 +80,7 @@
             color: white;
         }
 
-        @media (max-width: 768px) {
-            .sidebar { width: 80px; padding: 24px 12px; align-items: center; }
-            .brand span, .nav-item span { display: none; }
-            .nav-item { justify-content: center; width: 100%; padding: 12px 0; }
-        }
-
-        /* --- 4. MAIN CONTENT --- */
+        /* --- 3. MAIN CONTENT --- */
         .main-content {
             flex: 1;
             overflow-y: auto;
@@ -128,7 +116,7 @@
             font-weight: 600; font-size: 14px;
         }
 
-        /* --- 5. WIDGET GRID --- */
+        /* --- 4. RESPONSIVE GRID SYSTEM --- */
         .grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
@@ -146,11 +134,14 @@
         }
         .card:hover { transform: translateY(-2px); }
 
+        /* Desktop Spans */
         .col-span-8 { grid-column: span 8; }
         .col-span-4 { grid-column: span 4; }
-        
-        @media (max-width: 1024px) { .col-span-8, .col-span-4 { grid-column: span 12; } }
+        .col-span-3 { grid-column: span 3; }
+        .col-span-6 { grid-column: span 6; }
+        .col-span-12 { grid-column: span 12; }
 
+        /* --- 5. CARD CONTENTS --- */
         .card-label { font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
         .card-value { font-size: 36px; font-weight: 800; color: var(--text-main); line-height: 1.2; }
         .card-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
@@ -170,7 +161,7 @@
         /* --- 6. CONTROLS --- */
         .controls-wrapper {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
         }
         .control-tile {
@@ -194,7 +185,7 @@
         /* --- 7. CHARTS --- */
         .charts-wrapper {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 Columns */
+            grid-template-columns: 1fr 1fr;
             gap: 24px;
         }
         .chart-card {
@@ -205,14 +196,57 @@
             border: 1px solid #e5e7eb;
             height: 350px;
         }
-        .chart-full-width {
-            grid-column: span 2;
-        }
+        .chart-full-width { grid-column: span 2; }
         .chart-canvas-container { position: relative; height: 250px; width: 100%; }
 
-        @media (max-width: 1024px) {
+        /* --- 8. MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            
+            /* Turn Sidebar into Bottom Nav */
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 12px;
+                border-radius: 20px 20px 0 0;
+                box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .brand { display: none; }
+            .nav-item { 
+                flex-direction: column; 
+                gap: 4px; 
+                font-size: 10px; 
+                padding: 8px; 
+                margin-bottom: 0;
+            }
+            
+            /* Main Content Adjustments */
+            .main-content {
+                padding: 16px;
+                padding-bottom: 100px; /* Space for bottom nav */
+            }
+            
+            .header h1 { font-size: 22px; }
+            .user-badge span { display: none; } /* Hide username on mobile */
+            
+            /* Grid Stacking */
+            .grid { display: flex; flex-direction: column; gap: 16px; }
+            .col-span-8, .col-span-4, .col-span-3, .col-span-6 { width: 100%; }
+            
+            /* Card Adjustments */
+            .env-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .env-stats { width: 100%; justify-content: space-between; }
+            .stat-item { text-align: left; }
+            
+            /* Charts */
             .charts-wrapper { grid-template-columns: 1fr; }
             .chart-full-width { grid-column: span 1; }
+            .chart-card { height: 300px; }
         }
         
         ::-webkit-scrollbar { width: 8px; }
@@ -226,17 +260,16 @@
         <div class="brand">
             <span>⚡ IoT Admin</span>
         </div>
-        <nav>
-            <a href="#" onclick="navigateTo('top')" class="nav-item active" id="nav-top">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <nav style="display: contents;"> <a href="#" onclick="navigateTo('top')" class="nav-item active" id="nav-dashboard">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 <span>Dashboard</span>
             </a>
             <a href="#controls" onclick="navigateTo('controls')" class="nav-item" id="nav-controls">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 <span>Controls</span>
             </a>
             <a href="#analytics" onclick="navigateTo('analytics')" class="nav-item" id="nav-analytics">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
                 <span>Analytics</span>
             </a>
         </nav>
@@ -381,9 +414,8 @@
                 let gasVal = parseFloat(data.gas).toFixed(0);
                 if (isNaN(gasVal)) gasVal = "--";
                 
-                // Main Widget
+                // Explicitly adding PPM text here
                 document.getElementById('gas_live_p').innerText = gasVal + " PPM";
-                // UPDATED: Mini Widget with PPM label
                 document.getElementById('gas_card_p').innerText = gasVal + " PPM";
 
                 // Mini Cards
