@@ -4,271 +4,479 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Home Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⚡%3C/text%3E%3C/svg%3E">
     
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏠%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-
+    
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #e0e0e0; }
-        ::-webkit-scrollbar-thumb { background: #a0a0a0; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #888; }
-        .chart-container {
-            width: 100%;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-top: 24px;
+        /* --- 1. CSS RESET & VARIABLES --- */
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #111827;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
         }
-        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- 2. SCROLL OFFSET FIX --- */
+        /* This ensures that when you click a link, it doesn't hit the very top */
+        #top, #controls, #analytics {
+            scroll-margin-top: 32px;
+        }
+
+        /* --- 3. SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            transition: all 0.3s;
+            z-index: 20;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 80px; padding: 24px 12px; align-items: center; }
+            .brand span, .nav-item span { display: none; }
+            .nav-item { justify-content: center; width: 100%; padding: 12px 0; }
+        }
+
+        /* --- 4. MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+            scroll-behavior: smooth;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 { font-size: 28px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
+        
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .avatar-circle {
+            width: 32px; height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 600; font-size: 14px;
+        }
+
+        /* --- 5. WIDGET GRID --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-2px); }
+
+        .col-span-8 { grid-column: span 8; }
+        .col-span-4 { grid-column: span 4; }
+        
+        @media (max-width: 1024px) { .col-span-8, .col-span-4 { grid-column: span 12; } }
+
+        .card-label { font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .card-value { font-size: 36px; font-weight: 800; color: var(--text-main); line-height: 1.2; }
+        .card-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+
+        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
+        .dot-green { background-color: #10b981; box-shadow: 0 0 0 2px #d1fae5; }
+        .dot-red { background-color: #ef4444; box-shadow: 0 0 0 2px #fee2e2; }
+
+        .env-card { display: flex; justify-content: space-between; align-items: center; }
+        .env-main { display: flex; align-items: center; gap: 20px; }
+        .env-icon { font-size: 48px; }
+        .env-stats { display: flex; gap: 24px; }
+        .stat-item { text-align: right; }
+        .stat-label { font-size: 12px; color: var(--text-muted); }
+        .stat-val { font-size: 18px; font-weight: 600; color: #374151; }
+
+        /* --- 6. CONTROLS --- */
+        .controls-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .control-tile {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .control-name { font-weight: 600; color: #334155; }
+
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; -webkit-transition: .4s; transition: .4s; }
-        input:checked + .slider { background-color: #2196F3; }
-        input:focus + .slider { box-shadow: 0 0 1px #2196F3; }
-        input:checked + .slider:before { -webkit-transform: translateX(26px); -ms-transform: translateX(26px); transform: translateX(26px); }
-        .slider.round { border-radius: 34px; }
-        .slider.round:before { border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* --- 7. CHARTS --- */
+        .charts-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 Columns */
+            gap: 24px;
+        }
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e5e7eb;
+            height: 350px;
+        }
+        .chart-full-width {
+            grid-column: span 2;
+        }
+        .chart-canvas-container { position: relative; height: 250px; width: 100%; }
+
+        @media (max-width: 1024px) {
+            .charts-wrapper { grid-template-columns: 1fr; }
+            .chart-full-width { grid-column: span 1; }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-gray-800">
+<body>
 
-    <div class="flex h-screen overflow-hidden">
+    <aside class="sidebar">
+        <div class="brand">
+            <span>⚡ IoT Admin</span>
+        </div>
+        <nav>
+            <a href="#" onclick="navigateTo('top')" class="nav-item active" id="nav-top">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#controls" onclick="navigateTo('controls')" class="nav-item" id="nav-controls">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Controls</span>
+            </a>
+            <a href="#analytics" onclick="navigateTo('analytics')" class="nav-item" id="nav-analytics">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+                <span>Analytics</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
         
-        <div class="w-16 bg-white shadow-lg flex-col items-center py-6 border-r border-gray-200 hidden md:flex">
-            <div class="mb-10">
-                <a href="#" class="text-blue-600 text-3xl font-bold">
-                    &#127968;
-                </a>
+        <div class="header" id="top">
+            <div>
+                <h1>Overview</h1>
+                <p style="color: var(--text-muted); font-size: 14px;">Real-time sensor monitoring</p>
             </div>
-            <nav class="flex flex-col space-y-8">
-                <a href="/" class="p-2 rounded-lg bg-blue-100 text-blue-600" title="Dashboard">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 00-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                </a>
-            </nav>
+            <div class="user-badge">
+                <span style="font-size: 14px; font-weight: 500;">Admin User</span>
+                <div class="avatar-circle">A</div>
+            </div>
         </div>
 
-        <div class="flex-1 p-4 md:p-8 overflow-y-auto">
+        <div class="grid">
+            <div class="card col-span-8 env-card">
+                <div class="env-main">
+                    <div class="env-icon">🌤️</div>
+                    <div>
+                        <div class="card-label">Living Room</div>
+                        <div class="card-value" style="font-size: 42px; color: var(--primary);" id="temp_live_p">-- °C</div>
+                        <div class="card-sub">Galle, Sri Lanka</div>
+                    </div>
+                </div>
+                <div class="env-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Humidity</div>
+                        <div class="stat-val" id="humi_live_p">--%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Air Quality</div>
+                        <div class="stat-val" id="gas_live_p">-- PPM</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card col-span-4">
+                <div class="card-label">Motion</div>
+                <div class="card-value" id="motion_live_p" style="font-size: 28px;">Checking...</div>
+                <div class="card-sub">
+                    <span id="motion_dot" class="status-dot dot-green"></span>
+                    Last activity: <span id="motion_time">N/A</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card col-span-4">
+                <div class="card-label">Temperature</div>
+                <div class="card-value" style="color: #f59e0b;" id="temp_card_p">--</div>
+            </div>
+            <div class="card col-span-4">
+                <div class="card-label">Humidity</div>
+                <div class="card-value" style="color: #3b82f6;" id="humi_card_p">--</div>
+            </div>
+            <div class="card col-span-4">
+                <div class="card-label">Air Quality</div>
+                <div class="card-value" style="color: #10b981;" id="gas_card_p">--</div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 32px;" id="controls">
+            <div style="margin-bottom: 20px; font-weight: 700; font-size: 18px;">Device Control</div>
+            <div class="controls-wrapper">
+                <div class="control-tile">
+                    <span class="control-name">Master LED</span>
+                    <label class="switch"><input type="checkbox" id="ledSwitch" onclick="toggleLED()"><span class="slider round"></span></label>
+                </div>
+                <div class="control-tile">
+                    <span class="control-name">Relay Switch</span>
+                    <label class="switch"><input type="checkbox" id="relaySwitch" onclick="toggleRelay()"><span class="slider round"></span></label>
+                </div>
+                <div class="control-tile">
+                    <span class="control-name">DHT Sensor</span>
+                    <label class="switch"><input type="checkbox" id="dhtSwitch" onclick="toggleSensor('dht')" checked><span class="slider round"></span></label>
+                </div>
+                <div class="control-tile">
+                    <span class="control-name">Gas Sensor</span>
+                    <label class="switch"><input type="checkbox" id="gasSwitch" onclick="toggleSensor('gas')" checked><span class="slider round"></span></label>
+                </div>
+                <div class="control-tile">
+                    <span class="control-name">PIR Sensor</span>
+                    <label class="switch"><input type="checkbox" id="pirSwitch" onclick="toggleSensor('pir')" checked><span class="slider round"></span></label>
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics">
+            <h2 style="margin-bottom: 20px; font-weight: 700; font-size: 18px;">Historical Analytics</h2>
             
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
-                <div class="flex items-center space-x-4">
-                    <img class="w-10 h-10 rounded-full border-2 border-blue-400" src="https://via.placeholder.com/150/0000FF/FFFFFF?text=User" alt="User Avatar">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="charts-wrapper">
                 
-                <div class="bg-white p-6 rounded-xl shadow-md col-span-1 md:row-span-2">
-                    <h2 class="text-xl font-semibold mb-4">Living Room Environment</h2>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-5xl md:text-6xl">☀️</span>
-                        <div>
-                            <p class="text-4xl md:text-5xl font-bold text-blue-600" id="temp_live_p">-- °C</p>
-                            <p class="text-sm text-gray-500">Galle, SL</p>
-                        </div>
-                    </div>
-                    <div class="flex flex-col space-y-3 text-gray-600 text-base mt-6">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-blue-500 text-xl">&#x25F7;</span>
-                            <span id="humi_live_p">--% Humidity</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-blue-500 text-xl">&#x27A4;</span>
-                            <span id="gas_live_p">-- Air Quality</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-md col-span-1">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <span class="text-yellow-500 text-2xl">🌡️</span>
-                        <h2 class="text-xl font-semibold">Temperature</h2>
-                    </div>
-                    <p class="text-3xl md:text-4xl font-bold" id="temp_card_p">-- °C</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-md col-span-1">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <span class="text-green-500 text-2xl">💨</span>
-                        <h2 class="text-xl font-semibold">Air Quality</h2>
-                    </div>
-                    <p class="text-3xl md:text-4xl font-bold" id="gas_card_p">--</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-md col-span-1">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <span class="text-blue-500 text-2xl">💧</span>
-                        <h2 class="text-xl font-semibold">Humidity</h2>
-                    </div>
-                    <p class="text-3xl md:text-4xl font-bold" id="humi_card_p">-- %</p>
+                <div class="chart-card">
+                    <div class="card-label">Temperature Trend</div>
+                    <div class="chart-canvas-container"><canvas id="tempChart"></canvas></div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-between col-span-1">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <span class="text-blue-600 text-2xl">🚨</span>
-                        <h2 class="text-xl font-semibold">Motion Tracker</h2>
-                    </div>
-                    <p class="text-3xl font-bold" id="motion_live_p">---</M>
-                    <p class="text-sm text-gray-500">Last update: <span id="motion_time">N/A</span></p>
+                <div class="chart-card">
+                    <div class="card-label">Humidity Trend</div>
+                    <div class="chart-canvas-container"><canvas id="humiChart"></canvas></div>
                 </div>
-            </div>
+                
+                <div class="chart-card chart-full-width">
+                    <div class="card-label">Air Quality (PPM)</div>
+                    <div class="chart-canvas-container"><canvas id="gasChart"></canvas></div>
+                </div>
 
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Controls</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-blue-600 text-white p-6 rounded-xl shadow-md flex flex-col justify-between col-span-1">
-                        <h2 class="text-xl font-semibold mb-4">LED Control</h2>
-                        <div class="flex justify-between items-center">
-                            <span class="text-lg">Living Room LED</span>
-                            <label class="switch">
-                                <input type="checkbox" id="ledSwitch" onclick="toggleLED()">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white p-6 rounded-xl shadow-md col-span-1 md:col-span-2">
-                        <h2 class="text-xl font-semibold mb-4 text-gray-800">Sensor Toggles</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50">
-                                <span class="text-lg font-medium text-gray-700">DHT (Temp/Humi)</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="dhtSwitch" onclick="toggleSensor('dht')" checked>
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                            <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50">
-                                <span class="text-lg font-medium text-gray-700">Gas Sensor</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="gasSwitch" onclick="toggleSensor('gas')" checked>
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                            <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50">
-                                <span class="text-lg font-medium text-gray-700">PIR Motion</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="pirSwitch" onclick="toggleSensor('pir')" checked>
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <div class="mt-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Sensor History</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="chart-container col-span-1"><h3 class="text-xl font-semibold text-center mb-4">Temperature</h3><canvas id="tempChart"></canvas></div>
-                    <div class="chart-container col-span-1"><h3 class="text-xl font-semibold text-center mb-4">Humidity</h3><canvas id="humiChart"></canvas></div>
-                    <div class="chart-container lg:col-span-2"><h3 class="text-xl font-semibold text-center mb-4">Air Quality</h3><canvas id="gasChart"></canvas></div>
-                </div>
-            </div>
+        </div>
 
-        </div> </div> <script>
-        
-        // --- SCRIPT FOR LIVE DATA CARDS ---
+    </main>
+
+    <script>
+        // Navigation Handling
+        function navigateTo(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({behavior: 'smooth'});
+            
+            // Reset active class
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // Set active class
+            const navId = 'nav-' + sectionId;
+            const activeNav = document.getElementById(navId);
+            if(activeNav) activeNav.classList.add('active');
+        }
+
+        // --- LIVE DATA ---
         async function updateData() {
             try {
                 const response = await fetch('/data');
                 const data = await response.json();
-                document.getElementById('temp_live_p').innerText = data.temperature + " °C";
-                document.getElementById('humi_live_p').innerText = data.humidity + "% Humidity";
-                document.getElementById('gas_live_p').innerText = data.gas + " Air Quality";
+                
+                // Main Card
+                document.getElementById('temp_live_p').innerText = data.temperature + "°";
+                document.getElementById('humi_live_p').innerText = data.humidity + "%";
+                
+                // Parse Gas to PPM
+                let gasVal = parseFloat(data.gas).toFixed(0);
+                if (isNaN(gasVal)) gasVal = "--";
+                
+                // Main Widget
+                document.getElementById('gas_live_p').innerText = gasVal + " PPM";
+                // UPDATED: Mini Widget with PPM label
+                document.getElementById('gas_card_p').innerText = gasVal + " PPM";
+
+                // Mini Cards
                 document.getElementById('temp_card_p').innerText = data.temperature + " °C";
                 document.getElementById('humi_card_p').innerText = data.humidity + " %";
-                document.getElementById('gas_card_p').innerText = data.gas;
-                document.getElementById('motion_live_p').innerText = data.motion;
+
+                // Motion
+                const motionText = document.getElementById('motion_live_p');
+                const motionDot = document.getElementById('motion_dot');
+                
                 if (data.motion === 'DETECTED') {
-                    document.getElementById('motion_live_p').classList.add('text-red-600');
+                    motionText.innerText = "Detected";
+                    motionText.style.color = "#ef4444";
+                    motionDot.classList.remove('dot-green');
+                    motionDot.classList.add('dot-red');
                     document.getElementById('motion_time').innerText = new Date().toLocaleTimeString();
                 } else {
-                    document.getElementById('motion_live_p').classList.remove('text-red-600');
+                    motionText.innerText = "Clear";
+                    motionText.style.color = "#1f2937";
+                    motionDot.classList.remove('dot-red');
+                    motionDot.classList.add('dot-green');
                 }
             } catch (error) {
-                console.error("Error fetching live data:", error);
+                console.error("Error fetching data:", error);
             }
         }
 
-        // --- SCRIPT FOR HISTORY CHARTS ---
+        // --- CONTROLS ---
+        async function toggleLED() {
+            const state = document.getElementById('ledSwitch').checked ? "ON" : "OFF";
+            await fetch('/control/led', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ state: state }) });
+        }
+        async function toggleRelay() {
+            const state = document.getElementById('relaySwitch').checked ? "ON" : "OFF";
+            await fetch('/control/relay', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ state: state }) });
+        }
+        async function toggleSensor(sensorName) {
+            const state = document.getElementById(sensorName + 'Switch').checked ? "ON" : "OFF";
+            await fetch('/control/sensor', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ sensor: sensorName, state: state }) });
+        }
+
+        // --- CHARTS ---
         async function createChart(canvasId, apiUrl, labelName, color) {
             try {
                 const response = await fetch(apiUrl);
                 const apiData = await response.json();
                 const ctx = document.getElementById(canvasId).getContext('2d');
+                
+                // Create Gradient
+                let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, color.replace('rgb', 'rgba').replace(')', ', 0.5)'));
+                gradient.addColorStop(1, color.replace('rgb', 'rgba').replace(')', ', 0.0)'));
+
                 new Chart(ctx, {
                     type: 'line',
-                    data: { labels: apiData.labels, datasets: [{
+                    data: {
+                        labels: apiData.labels,
+                        datasets: [{
                             label: labelName,
                             data: apiData.data,
                             borderColor: color,
-                            backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
-                            tension: 0.1,
-                            fill: true
+                            backgroundColor: gradient,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.4
                         }]
                     },
-                    options: { scales: {
-                        x: { type: 'time', time: { unit: 'minute', tooltipFormat: 'HH:mm:ss' }, title: { display: true, text: 'Time' }},
-                        y: { title: { display: true, text: apiData.y_label }}
-                    }}
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { display: false },
+                            y: { border: { display: false }, grid: { color: '#f3f4f6' } }
+                        }
+                    }
                 });
             } catch (error) {
                 console.error(`Error creating chart ${canvasId}:`, error);
             }
         }
-        
-        // --- FUNCTION TO CONTROL LED ---
-        async function toggleLED() {
-            const ledSwitch = document.getElementById('ledSwitch');
-            const state = ledSwitch.checked ? "ON" : "OFF";
-            console.log("Sending LED command:", state);
-            try {
-                await fetch('/control/led', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ state: state })
-                });
-            } catch (error) {
-                console.error("Error sending LED command:", error);
-            }
-        }
 
-        // --- --- NEW: FUNCTION TO CONTROL SENSORS --- ---
-        async function toggleSensor(sensorName) {
-            // Find the correct switch
-            const sensorSwitch = document.getElementById(sensorName + 'Switch');
-            const state = sensorSwitch.checked ? "ON" : "OFF";
+        // --- INIT ---
+        window.onload = function() {
+            updateData(); 
+            setInterval(updateData, 3000); 
 
-            console.log(`Sending command for ${sensorName}: ${state}`);
-
-            try {
-                await fetch('/control/sensor', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ sensor: sensorName, state: state })
-                });
-            } catch (error) {
-                console.error(`Error sending ${sensorName} command:`, error);
-            }
-        }
-
-        // --- RUN EVERYTHING ON PAGE LOAD ---
-        (function() {
-            // Start the live data updates
-            updateData(); // Run once on load
-            setInterval(updateData, 3000); // Update every 3 seconds
-
-            // Create the history charts
-            createChart('tempChart', '/api/history/temperature', 'Temperature', 'rgb(255, 99, 132)');
-            createChart('humiChart', '/api/history/humidity', 'Humidity', 'rgb(54, 162, 235)');
-            createChart('gasChart', '/api/history/gas', 'Air Quality', 'rgb(75, 192, 192)');
-        })();
+            createChart('tempChart', '/api/history/temperature', 'Temperature', 'rgb(245, 158, 11)');
+            createChart('humiChart', '/api/history/humidity', 'Humidity', 'rgb(59, 130, 246)');
+            createChart('gasChart', '/api/history/gas', 'Air Quality', 'rgb(16, 185, 129)');
+        };
     </script>
 </body>
 </html>
