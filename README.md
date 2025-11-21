@@ -7,12 +7,21 @@
   <img src="https://img.shields.io/badge/Status-Online-green?style=for-the-badge" alt="Status">
 </a>
 
-#### Dashboard - Desktop View
+### Dashboard - Desktop View
+<img src="https://i.ibb.co/YBCDS3YC/dashboard-desktop1.png" style="width: 900px;" alt="Dash Desktop View">
+<img src="https://i.ibb.co/9HV3SpmK/dashboard-desktop2.png" style="width: 900px;" alt="Dash Desktop View">
+
+### Dashboard - Mobile View
+<img src="https://i.ibb.co/35sPQ9t6/dashboard-mobile.jpg" style="width: 350px;" alt="Dash Mobile View"> 
+
+<!--
+### Dashboard - Desktop View
 <img src="/assets/dashboard-desktop1.png" style="width: 900px;" alt="Dash Desktop View">
 <img src="/assets/dashboard-desktop2.png" style="width: 900px;" alt="Dash Desktop View">
 
-#### Dashboard - Mobile View
+### Dashboard - Mobile View
 <img src="/assets/dashboard-mobile.jpeg" style="width: 900px;" alt="Dash Mobile View"> 
+-->
 
 <br>
 
@@ -64,7 +73,8 @@ The data flows through the system in two main ways:
 - 1x 330 Ohm Resistor (for the LED) 
 - Breadboard and Jumper Wires 
 
-<img src="/assets/hardware.jpeg" style="width: 350px;" alt="Hardware Setup">
+<!--img src="/assets/hardware.jpeg" style="width: 350px;" alt="Hardware Setup"-->
+<img src="https://i.ibb.co/hJF2WhWX/hardware.jpg" style="width: 350px;" alt="Hardware Setup">
 
 ## 💻 Software & Libraries
 
