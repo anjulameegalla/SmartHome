@@ -12,7 +12,7 @@
 <img src="/assets/dashboard-desktop2.png" style="width: 900px;" alt="Dash Desktop View">
 
 #### Dashboard - Mobile View
-<img src="/assets/dashboard-mobile.jpeg" style="width: 350px;" alt="Dash Mobile View"> 
+<img src="/assets/dashboard-mobile.jpeg" style="width: 900px;" alt="Dash Mobile View"> 
 
 <br>
 
