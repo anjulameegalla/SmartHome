@@ -12,7 +12,7 @@
 <img src="https://i.ibb.co/9HV3SpmK/dashboard-desktop2.png" style="width: 900px;" alt="Dash Desktop View">
 
 ### Dashboard - Mobile View
-<img src="https://i.ibb.co/35sPQ9t6/dashboard-mobile.jpg" style="width: 350px;" alt="Dash Mobile View"> 
+<img src="https://i.ibb.co/35sPQ9t6/dashboard-mobile.jpg" style="width: 900px;" alt="Dash Mobile View"> 
 
 <!--
 ### Dashboard - Desktop View
