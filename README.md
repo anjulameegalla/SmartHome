@@ -9,7 +9,7 @@
 
 
 ### Dashboard - Desktop View
-<img src="//images/dashboard-desktop1.png" style="width: 900px;" alt="Dash Desktop View">
+<img src="/images/dashboard-desktop1.png" style="width: 900px;" alt="Dash Desktop View">
 <img src="/images/dashboard-desktop2.png" style="width: 900px;" alt="Dash Desktop View">
 
 ### Dashboard - Mobile View
