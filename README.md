@@ -1,6 +1,6 @@
 ## ESP32 IoT Smart Home Dashboard
 
-<img src="https://img.shields.io/badge/Status-Online-green?style=for-the-badge" alt="Status">
+<img src="https://img.shields.io/badge/Status-Offline-grey?style=for-the-badge" alt="Status">
 
 <br>
 
