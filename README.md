@@ -55,7 +55,7 @@ The data flows through the system in two main ways:
 - Breadboard and Jumper Wires
 
       
-<img src="images/hardware.jpeg" style="width: 350px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
+<img src="/assets/hardware.jpeg" style="width: 350px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
 <p class="caption">Figure 4: Physical Hardware Setup on Breadboard</p>
 
 
