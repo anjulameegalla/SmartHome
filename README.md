@@ -7,7 +7,7 @@ This project creates a complete data loop between your physical room and a web i
 
 ![Dashboard Desktop View](/assets/dashboard-desktop1.png)
 
-### Desktop View - Historical Data Charts
+#### Desktop View - Historical Data Charts
 
 ![Dashboard Desktop View 2](/assets/dashboard-desktop2.png)
 
@@ -54,9 +54,8 @@ The data flows through the system in two main ways:
 - 1x LED & 330 Ohm Resistor
 - Breadboard and Jumper Wires
 
-      
+#### Physical Hardware Setup on Breadboard      
 <img src="/assets/hardware.jpeg" style="width: 350px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
-<p class="caption">Figure 4: Physical Hardware Setup on Breadboard</p>
 
 
 ## Software & Libraries
