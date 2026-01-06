@@ -57,6 +57,7 @@ The data flows through the system in two main ways:
 #### Physical Hardware Setup on Breadboard      
 <img src="/assets/hardware.jpeg" style="width: 350px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
 
+---
 
 ## Software & Libraries
 
@@ -78,9 +79,16 @@ pip install Flask paho-mqtt
 
 Download the source code to get started:
 
-* [Download ESP32 Firmware (.ino)](/esp32-code/esp32_sketch.ino)
-* [Download Python Backend (.py)](/app.py)
-* [Download HTML Dashboard Template (.html)](/templates/index.html)
+- [Download ESP32 Firmware (.ino)](/esp32-code/esp32_sketch.ino)
+- [Download Python Backend (.py)](/app.py)
+- [Download HTML Dashboard Template (.html)](/templates/index.html)
+
+You can find a detailed explanation of these source code here:
+
+- [Explanation of ESP32 IDE Script](/docs/ino_exp.md)
+- [Explanation of Python code](/docs/python_exp.md)
+- [Explanation of HTML template code](/docs/temp_exp.md)
+
 
 ---
 
