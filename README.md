@@ -3,15 +3,19 @@
 
 This project creates a complete data loop between your physical room and a web interface. It involves sensing environmental data using an ESP32 microcontroller, processing it via a Python Flask backend, and visualizing it on a custom-built dashboard.
 
-Desktop View - Live Sensor Widgets
+#### Desktop View - Live Sensor Widgets
+
 ![Dashboard Desktop View](/assets/dashboard-desktop1.png)
 
-Desktop View - Historical Data Charts
+### Desktop View - Historical Data Charts
+
 ![Dashboard Desktop View 2](/assets/dashboard-desktop2.png)
 
-Mobile Responsive View
+#### Mobile Responsive View
+
 ![Dashboard Mobile View](/assets/dashboard-mobile.jpeg)
 
+---
 
 ## How It Works
 
@@ -38,6 +42,8 @@ The data flows through the system in two main ways:
 * **Sensor Data (ESP32 to Dashboard):** ESP32 (Sensors) → MQTT Broker → Python Backend (Flask) → SQLite Database & Web Frontend
 * **Control (Dashboard to ESP32):** Web Frontend → Python Backend → MQTT Broker → ESP32 (Toggles LED, Relay & Logic)
 
+---
+
 ## Hardware Requirements
 
 - ESP32 Development Board
@@ -48,8 +54,9 @@ The data flows through the system in two main ways:
 - 1x LED & 330 Ohm Resistor
 - Breadboard and Jumper Wires
 
-### Physical Hardware Setup on Breadboard
-![Hardware Setup](/assets/hardware.jpeg)
+      
+<img src="images/hardware.jpeg" style="width: 350px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
+<p class="caption">Figure 4: Physical Hardware Setup on Breadboard</p>
 
 
 ## Software & Libraries
@@ -75,6 +82,8 @@ Download the source code to get started:
 * [Download ESP32 Firmware (.ino)](/esp32-code/esp32_sketch.ino)
 * [Download Python Backend (.py)](/app.py)
 * [Download HTML Dashboard Template (.html)](/templates/index.html)
+
+---
 
 ## Step-by-Step Project Flow
 
@@ -139,6 +148,7 @@ ngrok http 5000
 
 3. Use the generated `https://...ngrok.io` URL on any device.
 
+---
 
 ## Future Improvements
 
