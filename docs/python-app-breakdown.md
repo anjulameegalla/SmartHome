@@ -1,6 +1,6 @@
-# app.py Explanation
+# app.py Breakdown
 
-Here is a line-by-line explanation of the Python code provided in app.py.
+Here is a line-by-line breakdown of the Python code provided in app.py.
 
 
 ## 1. Imports

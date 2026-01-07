@@ -3,6 +3,8 @@
 
 This project creates a complete data loop between your physical room and a web interface. It involves sensing environmental data using an ESP32 microcontroller, processing it via a Python Flask backend, and visualizing it on a custom-built dashboard.
 
+## Demo
+
 #### Desktop View - Live Sensor Widgets
 
 ![Dashboard Desktop View](/assets/dashboard-desktop1.png)
@@ -41,6 +43,8 @@ The data flows through the system in two main ways:
 
 * **Sensor Data (ESP32 to Dashboard):** ESP32 (Sensors) → MQTT Broker → Python Backend (Flask) → SQLite Database & Web Frontend
 * **Control (Dashboard to ESP32):** Web Frontend → Python Backend → MQTT Broker → ESP32 (Toggles LED, Relay & Logic)
+
+![Project Sketch](/assets/project-sketch.png)
 
 ---
 
@@ -85,9 +89,9 @@ Download the source code to get started:
 
 You can find a detailed explanation of these source code here:
 
-- [Explanation of ESP32 IDE Script](/docs/ino_exp.md)
-- [Explanation of Python code](/docs/python_exp.md)
-- [Explanation of HTML template code](/docs/temp_exp.md)
+- [Breakdown of ESP32 IDE Script](/docs/esp32-ino-breakdown.md)
+- [Breakdown of Python App code](/docs/python-app-breakdown.md)
+- [Breakdown of JavaScript logic code](/docs/template-js-breakdown.md)
 
 
 ---
