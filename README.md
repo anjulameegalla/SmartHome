@@ -60,6 +60,8 @@ The data flows through the system in two main ways:
 
 #### Physical Hardware Setup on Breadboard      
 <img src="/assets/hardware.jpeg" style="width: 350px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
+<br>
+<img src="/assets/troubleshooting.jpeg" style="width: 450px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
 
 ---
 
