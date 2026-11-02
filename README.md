@@ -1,4 +1,4 @@
-# Building an ESP32 IoT Smart Home Dashboard
+# Smart Home automation system using ESP32
 
 
 This project creates a complete data loop between your physical room and a web interface. It involves sensing environmental data using an ESP32 microcontroller, processing it via a Python Flask backend, and visualizing it on a custom-built dashboard.
@@ -17,7 +17,6 @@ This project creates a complete data loop between your physical room and a web i
 
 ![Dashboard Mobile View](/assets/dashboard-mobile.jpeg)
 
----
 
 ## How It Works
 
@@ -44,8 +43,6 @@ The data flows through the system in two main ways:
 * **Sensor Data (ESP32 to Dashboard):** ESP32 (Sensors) → MQTT Broker → Python Backend (Flask) → SQLite Database & Web Frontend
 * **Control (Dashboard to ESP32):** Web Frontend → Python Backend → MQTT Broker → ESP32 (Toggles LED, Relay & Logic)
 
-![Project Sketch](/assets/project-sketch.png)
-
 ---
 
 ## Hardware Requirements
@@ -63,7 +60,6 @@ The data flows through the system in two main ways:
 <br>
 <img src="/assets/troubleshooting.jpeg" style="width: 450px; margin-left: auto; margin-right: auto;" alt="Hardware Setup">
 
----
 
 ## Software & Libraries
 
@@ -160,16 +156,6 @@ ngrok http 5000
 ```
 
 3. Use the generated `https://...ngrok.io` URL on any device.
-
----
-
-## Future Improvements
-
-- **Permanent Cloud Deployment**: Deploy the `app.py` to a VPS or cloud platform for 24/7 uptime without a PC.
-
-- **Private Broker**: Switch from the public HiveMQ broker to a private Mosquitto instance for enhanced security.
-
-- **PCB Design**: Move from a breadboard to a custom printed circuit board for a cleaner hardware look.
 
 
 <br>
